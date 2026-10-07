@@ -39,6 +39,21 @@
     <span class="dev-icon">⚡</span>
   </div>
 
+  <!-- TOMBOL DONASI (DI ATAS) -->
+  <div class="donasi-wrapper-top">
+    <button type="button"
+            class="btn-donasi"
+            id="btnDonasi"
+            title="Dukung WahyuDev via Saweria">
+      <span class="donasi-icon">☕</span>
+      <span class="donasi-text">
+        <span class="donasi-label">Dukung WahyuDev</span>
+        <span class="donasi-sub">Traktir Kopi via Saweria</span>
+      </span>
+      <span class="donasi-arrow">→</span>
+    </button>
+  </div>
+
   <!-- DASHBOARD -->
   <div class="dashboard">
     <div class="card saldo">
@@ -59,7 +74,7 @@
   <div class="target-card">
     <div class="target-header">
       <h3>🎯 Target Bulan Ini</h3>
-      <button class="btn-edit-target" onclick="openTargetModal()">Edit</button>
+      <button type="button" class="btn-edit-target" id="btnEditTarget">✏️ Edit</button>
     </div>
     <div class="progress-bar">
       <div class="progress-fill" id="targetProgress"></div>
@@ -79,7 +94,7 @@
     <h2 id="formTitle">➕ Tambah Transaksi</h2>
     <div class="edit-banner" id="editBanner">
       <span>✏️ Mode Edit Aktif</span>
-      <button onclick="cancelEdit()">Batal</button>
+      <button type="button" id="btnCancelEdit">Batal</button>
     </div>
     <form id="formTransaksi">
       <div class="row">
@@ -142,8 +157,8 @@
   <!-- ACTION BAR -->
   <section style="padding:14px;">
     <div class="action-bar">
-      <button class="btn-action btn-export" onclick="exportCSV()">📤 Export CSV</button>
-      <button class="btn-action btn-reset" onclick="resetData()">🗑️ Reset Data</button>
+      <button type="button" class="btn-action btn-export" id="btnExport">📤 Export CSV</button>
+      <button type="button" class="btn-action btn-reset" id="btnReset">🗑️ Reset Data</button>
     </div>
   </section>
 
@@ -161,22 +176,7 @@
     </div>
     <div class="footer-text">Crafted with <span class="footer-heart">❤️</span> by</div>
     <div class="footer-brand">WAHYUDEV</div>
-    <div class="footer-version">TABUNGANKU v3.2 · Sultan Edition</div>
-
-    <!-- TOMBOL DONASI DI TENGAH -->
-    <div class="donasi-wrapper">
-      <button type="button"
-              class="btn-donasi"
-              id="btnDonasi"
-              title="Dukung WahyuDev via Saweria">
-        <span class="donasi-icon">☕</span>
-        <span class="donasi-text">
-          <span class="donasi-label">Dukung WahyuDev</span>
-          <span class="donasi-sub">Traktir Kopi via Saweria</span>
-        </span>
-        <span class="donasi-arrow">→</span>
-      </button>
-    </div>
+    <div class="footer-version">TABUNGANKU v3.3 · Sultan Edition</div>
   </footer>
 </div>
 
@@ -189,12 +189,12 @@
       <input type="number" id="inputTarget" min="0" placeholder="Contoh: 10000000">
     </div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeTargetModal()">Batal</button>
-      <button class="btn-primary" onclick="saveTarget()">Simpan</button>
+      <button type="button" class="btn-secondary" id="btnCloseTarget">Batal</button>
+      <button type="button" class="btn-primary" id="btnSaveTarget">Simpan</button>
     </div>
   </div>
 </div>
 
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
