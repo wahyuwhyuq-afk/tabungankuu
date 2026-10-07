@@ -1,5 +1,5 @@
 /* =========================================================
-   TABUNGANKU v3.2 - Sultan Edition
+   TABUNGANKU v3.3 - Sultan Edition
    JavaScript Logic by WahyuDev
    ========================================================= */
 
@@ -21,7 +21,7 @@ let searchQuery = '';
 
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('%c👑 TABUNGANKU v3.2', 'color: #d4af37; font-size: 20px; font-weight: bold;');
+  console.log('%c👑 TABUNGANKU v3.3', 'color: #d4af37; font-size: 20px; font-weight: bold;');
   console.log('%cDeveloped by WahyuDev', 'color: #d4af37; font-size: 13px; letter-spacing: 2px;');
 
   initTheme();
@@ -30,35 +30,101 @@ document.addEventListener('DOMContentLoaded', () => {
   setTanggalHariIni();
   bindEvents();
   renderAll();
-
-  // Bind tombol donasi
-  const btnDonasi = document.getElementById('btnDonasi');
-  if (btnDonasi) {
-    btnDonasi.addEventListener('click', bukaSaweria);
-  }
 });
 
 function bindEvents() {
+  // Form input
   document.getElementById('jenis').addEventListener('change', updateKategoriDropdown);
   document.getElementById('formTransaksi').addEventListener('submit', submitForm);
+
+  // Filter & search
   document.getElementById('filterBulan').addEventListener('change', renderList);
   document.getElementById('filterTahun').addEventListener('input', renderList);
   document.getElementById('searchInput').addEventListener('input', (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
     renderList();
   });
+
+  // Theme toggle
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
+  // ✅ TOMBOL EDIT TARGET — FIX: pakai addEventListener
+  const btnEditTarget = document.getElementById('btnEditTarget');
+  if (btnEditTarget) {
+    btnEditTarget.addEventListener('click', (e) => {
+      e.preventDefault();
+      openTargetModal();
+    });
+    console.log('✅ Tombol Edit Target terpasang');
+  } else {
+    console.error('❌ Tombol Edit Target tidak ditemukan!');
+  }
+
+  // ✅ TOMBOL CANCEL EDIT (banner)
+  const btnCancelEdit = document.getElementById('btnCancelEdit');
+  if (btnCancelEdit) {
+    btnCancelEdit.addEventListener('click', (e) => {
+      e.preventDefault();
+      cancelEdit();
+    });
+  }
+
+  // ✅ TOMBOL MODAL TARGET
+  const btnCloseTarget = document.getElementById('btnCloseTarget');
+  if (btnCloseTarget) {
+    btnCloseTarget.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeTargetModal();
+    });
+  }
+
+  const btnSaveTarget = document.getElementById('btnSaveTarget');
+  if (btnSaveTarget) {
+    btnSaveTarget.addEventListener('click', (e) => {
+      e.preventDefault();
+      saveTarget();
+    });
+  }
+
+  // ✅ TOMBOL EXPORT & RESET
+  const btnExport = document.getElementById('btnExport');
+  if (btnExport) btnExport.addEventListener('click', exportCSV);
+
+  const btnReset = document.getElementById('btnReset');
+  if (btnReset) btnReset.addEventListener('click', resetData);
+
+  // ✅ TOMBOL DONASI
+  const btnDonasi = document.getElementById('btnDonasi');
+  if (btnDonasi) {
+    btnDonasi.addEventListener('click', (e) => {
+      e.preventDefault();
+      bukaSaweria();
+    });
+  }
+
+  // ✅ Klik overlay modal target → tutup
   document.getElementById('targetModal').addEventListener('click', (e) => {
     if (e.target.id === 'targetModal') closeTargetModal();
   });
 
+  // ✅ Enter di input target → simpan
+  const inputTarget = document.getElementById('inputTarget');
+  if (inputTarget) {
+    inputTarget.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveTarget();
+      }
+    });
+  }
+
+  // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeTargetModal();
 
-    // Shortcut "D" untuk donasi
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
     if ((e.key === 'd' || e.key === 'D') && !e.ctrlKey && !e.metaKey && !e.altKey) {
       bukaSaweria();
     }
@@ -231,12 +297,20 @@ function renderList() {
         </div>
         <div class="trx-jumlah ${cls}">${sign} ${formatRupiah(t.jumlah)}</div>
         <div class="trx-actions">
-          <button class="btn-icon btn-edit" onclick="editTransaksi('${t.id}')" title="Edit">✏️</button>
-          <button class="btn-icon btn-hapus" onclick="hapusTransaksi('${t.id}')" title="Hapus">🗑️</button>
+          <button type="button" class="btn-icon btn-edit" data-action="edit" data-id="${t.id}" title="Edit">✏️</button>
+          <button type="button" class="btn-icon btn-hapus" data-action="hapus" data-id="${t.id}" title="Hapus">🗑️</button>
         </div>
       </div>
     `;
   }).join('');
+
+  // ✅ Bind event listener ke tombol edit/hapus (delegation)
+  container.querySelectorAll('[data-action="edit"]').forEach(btn => {
+    btn.addEventListener('click', () => editTransaksi(btn.dataset.id));
+  });
+  container.querySelectorAll('[data-action="hapus"]').forEach(btn => {
+    btn.addEventListener('click', () => hapusTransaksi(btn.dataset.id));
+  });
 }
 
 /* ============ ACTIONS ============ */
@@ -344,13 +418,21 @@ function resetData() {
 
 /* ============ TARGET MODAL ============ */
 function openTargetModal() {
-  document.getElementById('inputTarget').value = getTarget() || '';
-  document.getElementById('targetModal').classList.add('show');
-  setTimeout(() => document.getElementById('inputTarget').focus(), 100);
+  console.log('🎯 Membuka modal target');
+  const inputTarget = document.getElementById('inputTarget');
+  const modal = document.getElementById('targetModal');
+  if (!inputTarget || !modal) {
+    console.error('❌ Modal target tidak ditemukan!');
+    return;
+  }
+  inputTarget.value = getTarget() || '';
+  modal.classList.add('show');
+  setTimeout(() => inputTarget.focus(), 100);
 }
 
 function closeTargetModal() {
-  document.getElementById('targetModal').classList.remove('show');
+  const modal = document.getElementById('targetModal');
+  if (modal) modal.classList.remove('show');
 }
 
 function saveTarget() {
@@ -391,7 +473,6 @@ function exportCSV() {
 function bukaSaweria() {
   const btn = document.getElementById('btnDonasi');
 
-  // Loading state pada tombol
   if (btn) {
     btn.classList.add('opening');
     btn.disabled = true;
@@ -409,10 +490,8 @@ function bukaSaweria() {
   console.log('%c☕ Mengarahkan ke Saweria...',
     'color: #d4af37; font-size: 13px; font-weight: bold;');
 
-  // Coba buka tab baru
   const newTab = window.open(SAWERIA_URL, '_blank', 'noopener,noreferrer');
 
-  // Fallback: jika popup diblokir → redirect di tab yang sama
   if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
     console.log('%c⚠️ Popup diblokir, redirect di tab yang sama...',
       'color: #f59e0b; font-size: 12px;');
@@ -443,4 +522,4 @@ function showToast(msg, type) {
   t.className = 'toast ' + (type || '') + ' show';
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
-}
+   }
