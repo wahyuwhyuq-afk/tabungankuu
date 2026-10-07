@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TABUNGANKU">
+<meta name="author" content="WahyuDev">
+<meta name="description" content="TABUNGANKU - Aplikasi Pencatatan Keuangan Pribadi by WahyuDev">
+<title>TABUNGANKU · Sultan Finance by WahyuDev</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="crown">👑</span>
+        <span>TABUNGANKU</span>
+      </div>
+      <p class="tagline">Sultan Finance</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle tema">☀️</button>
+  </header>
+
+  <!-- DEVELOPER BADGE -->
+  <div class="dev-badge">
+    <span class="dev-icon">⚡</span>
+    <span class="dev-text">Developed by</span>
+    <span class="dev-name">WahyuDev</span>
+    <span class="dev-icon">⚡</span>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+    <div class="card saldo">
+      <div class="label"><span class="icon">💰</span> Saldo</div>
+      <div class="value" id="cardSaldo">Rp 0</div>
+    </div>
+    <div class="card pemasukan">
+      <div class="label"><span class="icon">📈</span> Masuk</div>
+      <div class="value" id="cardPemasukan">Rp 0</div>
+    </div>
+    <div class="card pengeluaran">
+      <div class="label"><span class="icon">📉</span> Keluar</div>
+      <div class="value" id="cardPengeluaran">Rp 0</div>
+    </div>
+  </div>
+
+  <!-- TARGET TABUNGAN -->
+  <div class="target-card">
+    <div class="target-header">
+      <h3>🎯 Target Bulan Ini</h3>
+      <button class="btn-edit-target" onclick="openTargetModal()">Edit</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="targetProgress"></div>
+    </div>
+    <div class="target-info">
+      <span>Terkumpul: <strong id="targetTerkumpul">Rp 0</strong></span>
+      <span>Target: <strong id="targetJumlah">Rp 0</strong></span>
+    </div>
+    <div class="target-info" style="margin-top:6px;">
+      <span id="targetPersen">0% tercapai</span>
+      <span id="targetSisa">Belum diset</span>
+    </div>
+  </div>
+
+  <!-- FORM INPUT -->
+  <section class="form-section">
+    <h2 id="formTitle">➕ Tambah Transaksi</h2>
+    <div class="edit-banner" id="editBanner">
+      <span>✏️ Mode Edit Aktif</span>
+      <button onclick="cancelEdit()">Batal</button>
+    </div>
+    <form id="formTransaksi">
+      <div class="row">
+        <div class="field">
+          <label>Tanggal</label>
+          <input type="date" id="tanggal" required>
+        </div>
+        <div class="field">
+          <label>Jenis</label>
+          <select id="jenis" required>
+            <option value="Pemasukan">Pemasukan</option>
+            <option value="Pengeluaran">Pengeluaran</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Kategori</label>
+          <select id="kategori" required></select>
+        </div>
+        <div class="field">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="jumlah" min="1" placeholder="0" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Keterangan</label>
+        <input type="text" id="keterangan" placeholder="Opsional">
+      </div>
+      <button type="submit" class="btn-primary" id="btnSubmit">💾 Simpan Transaksi</button>
+    </form>
+  </section>
+
+  <!-- FILTER & SEARCH -->
+  <section>
+    <h2>📅 Riwayat Transaksi</h2>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Cari kategori atau keterangan...">
+    </div>
+    <div class="filter-bar">
+      <select id="filterBulan">
+        <option value="0">Semua Bulan</option>
+        <option value="1">Januari</option>
+        <option value="2">Februari</option>
+        <option value="3">Maret</option>
+        <option value="4">April</option>
+        <option value="5">Mei</option>
+        <option value="6">Juni</option>
+        <option value="7">Juli</option>
+        <option value="8">Agustus</option>
+        <option value="9">September</option>
+        <option value="10">Oktober</option>
+        <option value="11">November</option>
+        <option value="12">Desember</option>
+      </select>
+      <input type="number" id="filterTahun" placeholder="Tahun">
+    </div>
+  </section>
+
+  <!-- ACTION BAR -->
+  <section style="padding:14px;">
+    <div class="action-bar">
+      <button class="btn-action btn-export" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="btn-action btn-reset" onclick="resetData()">🗑️ Reset Data</button>
+    </div>
+  </section>
+
+  <!-- LIST TRANSAKSI -->
+  <section class="list-section">
+    <div id="listTransaksi" class="list-transaksi"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-divider">
+      <div class="line"></div>
+      <span class="crown-icon">👑</span>
+      <div class="line"></div>
+    </div>
+    <div class="footer-text">Crafted with <span class="footer-heart">❤️</span> by</div>
+    <div class="footer-brand">WAHYUDEV</div>
+    <div class="footer-version">TABUNGANKU v3.2 · Sultan Edition</div>
+
+    <!-- TOMBOL DONASI DI TENGAH -->
+    <div class="donasi-wrapper">
+      <button type="button"
+              class="btn-donasi"
+              id="btnDonasi"
+              title="Dukung WahyuDev via Saweria">
+        <span class="donasi-icon">☕</span>
+        <span class="donasi-text">
+          <span class="donasi-label">Dukung WahyuDev</span>
+          <span class="donasi-sub">Traktir Kopi via Saweria</span>
+        </span>
+        <span class="donasi-arrow">→</span>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- MODAL TARGET -->
+<div class="modal-overlay" id="targetModal">
+  <div class="modal">
+    <h3>🎯 Set Target Tabungan</h3>
+    <div class="field">
+      <label>Target Bulanan (Rp)</label>
+      <input type="number" id="inputTarget" min="0" placeholder="Contoh: 10000000">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeTargetModal()">Batal</button>
+      <button class="btn-primary" onclick="saveTarget()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
